@@ -29,11 +29,32 @@ struct SpriteVertex {
 
 implement_vertex!(SpriteVertex, position, i_tex_coords);
 
+#[cfg(target_os = "macos")]
+fn get_shader() -> (&'static str, &'static str) {
+    return (include_str!("shaders/fxaa.macos.vert"),
+            include_str!("shaders/fxaa.macos.frag"))
+}
+
+#[cfg(target_os = "windows")]
+fn get_shader() -> (&'static str, &'static str) {
+    return (include_str!("shaders/fxaa.vert"),
+            include_str!("shaders/fxaa.frag"))
+}
+
+#[cfg(target_os = "linux")]
+fn get_shader() -> (&'static str, &'static str) {
+    return (include_str!("shaders/fxaa.vert"),
+            include_str!("shaders/fxaa.frag"))
+}
+
+
+
 impl FxaaSystem {
     pub fn new<F: ?Sized>(facade: &F) -> FxaaSystem
     where
         F: Facade,
     {
+        let (vertex, fragment) = get_shader();
         FxaaSystem {
             context: facade.get_context().clone(),
 
@@ -65,12 +86,13 @@ impl FxaaSystem {
                 glium::index::PrimitiveType::TriangleStrip,
                 &[1 as u16, 2, 0, 3],
             )
-            .unwrap(),
+                .unwrap(),
+
 
             program: program!(facade,
                 100 => {
-                    vertex: include_str!("shaders/fxaa.vert"),
-                    fragment: include_str!("shaders/fxaa.frag"),
+                    vertex: vertex,
+                    fragment: fragment,
                 }
             )
             .unwrap(),
