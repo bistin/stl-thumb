@@ -231,7 +231,11 @@ where
 
     // View matrix (convert to positions relative to camera)
     let view_matrix = cgmath::Matrix4::look_at_rh(
-        CAM_POSITION,
+        cgmath::Point3 {
+            x: config.x as f32,
+            y: config.y as f32,
+            z: config.z as f32,
+        },
         cgmath::Point3::origin(),
         cgmath::Vector3::unit_z(),
     );

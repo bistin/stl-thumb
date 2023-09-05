@@ -30,6 +30,9 @@ pub struct Config {
     pub background: (f32, f32, f32, f32),
     pub aamethod: AAMethod,
     pub recalc_normals: bool,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
 impl Default for Config {
@@ -50,6 +53,9 @@ impl Default for Config {
             background: (0.0, 0.0, 0.0, 0.0),
             aamethod: AAMethod::FXAA,
             recalc_normals: false,
+            x: 2.0,
+            y: -4.0,
+            z: 2.0
         }
     }
 }
@@ -88,9 +94,33 @@ impl Config {
                     .required(false)
             )
             .arg(
+                clap::Arg::new("x")
+                    .help("x")
+                    .short('x')
+                    .long("x")
+                    .takes_value(true)
+                    .required(false)
+            )
+            .arg(
+                clap::Arg::new("y")
+                    .help("y")
+                    .short('y')
+                    .long("y")
+                    .takes_value(true)
+                    .required(false)
+            )
+            .arg(
+                clap::Arg::new("z")
+                    .help("z")
+                    .short('z')
+                    .long("z")
+                    .takes_value(true)
+                    .required(false)
+            )
+            .arg(
                 clap::Arg::new("visible")
                     .help("Display the thumbnail in a window instead of saving a file")
-                    .short('x')
+                    .short('w')
                     .required(false)
             )
             .arg(
@@ -147,6 +177,20 @@ impl Config {
         matches
             .value_of("size")
             .map(|x| c.height = x.parse::<u32>().expect("Invalid size"));
+
+        matches
+            .value_of("x")
+            .map(|x| c.x = x.parse::<f32>().expect("Invalid x"));
+
+        matches
+            .value_of("y")
+            .map(|x| c.y = x.parse::<f32>().expect("Invalid y"));
+
+        matches
+            .value_of("z")
+            .map(|x| c.z = x.parse::<f32>().expect("Invalid z"));
+
+
         c.visible = matches.is_present("visible");
         c.verbosity = matches.occurrences_of("verbosity") as usize;
         match matches.values_of("material") {
